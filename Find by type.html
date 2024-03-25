@@ -16,6 +16,7 @@
         function outputTable(data) {
             console.log(data);
             let tbody = document.getElementById("results");
+            tbody.innerHTML = '';
             let features = data.features;
             for (let i = 0; i < features.length; i++) {
                 let row = document.createElement('tr');
@@ -23,26 +24,30 @@
                 let attributes = features[i].attributes;
                 
                 // Create table cells for each attribute
-                let chargepointCell = document.createElement('td');
-                chargepointCell.textContent = attributes.Chargepoint;
-                row.appendChild(chargepointCell);
+                let dataRefCell = document.createElement('td');
+                dataRefCell.textContent = attributes.DeviceRef;
+                row.appendChild(dataRefCell);
 
-                let modelVariantCell = document.createElement('td');
-                modelVariantCell.textContent = attributes.Model_Variant;
-                row.appendChild(modelVariantCell);
+                let deviceNameCell = document.createElement('td');
+                deviceNameCell.textContent = attributes.DeviceName;
+                row.appendChild(deviceNameCell);
 
-                let locationCell = document.createElement('td');
-                locationCell.textContent = attributes.Location;
-                row.appendChild(locationCell);
+                let postcodeCell = document.createElement('td');
+                postcodeCell.textContent = attributes.PostCode;
+                row.appendChild(postcodeCell);
 
-                let energyCell = document.createElement('td');
-                energyCell.textContent = attributes.Energy__kWh_;
-                row.appendChild(energyCell);
+                let locationDescCell = document.createElement('td');
+                locationDescCell.textContent = attributes.LocationShDesc;
+                row.appendChild(locationDescCell);
+
+                let accessCell = document.createElement('td');
+                accessCell.textContent = attributes.Access24Hours;
+                row.appendChild(accessCell);
             }
         }
 
         function search(term) {
-            let url = 'https://services2.arcgis.com/a4vR8lmmksFixzmB/arcgis/rest/services/Replicate_EV_Charge_point_data_April_2020/FeatureServer/0/query?where=1%3D1&outFields=Chargepoint,Location,Energy__kWh_,Model_Variant&outSR=4326&f=json'
+            let url = 'https://maps2.bristol.gov.uk/server2/rest/services/ext/ll_transport/MapServer/21/query?where=1%3D1&outFields=DeviceRef,DeviceName,PostCode,Access24Hours,LocationShDesc&outSR=4326&f=json'
             fetch(url,{ method: 'get' , headers: { Accept: "application/JSON" }})
             .then(res => res.json())
             .then(data => outputTable(data));
@@ -83,10 +88,11 @@
             <table id="outputTable">
                 <thead>
                     <tr>
-                        <th>Chargepoint</th>
-                        <th>Model Variant</th>
-                        <th>Location</th>
-                        <th>Energy (kWh)</th>
+                        <th>Device Reference</th>
+                        <th>Device Name</th>
+                        <th>PostCode</th>
+                        <th>location Description</th>
+                        <th>Access 24 Hours</th>
                     </tr>
                 </thead>
                 <tbody id="results">
