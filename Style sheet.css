@@ -103,3 +103,7 @@ th {
     height: 78%;
     width: 80%;
 } 
+
+.mapboxgl-popup-content-wrapper {
+    outline: none;
+}
