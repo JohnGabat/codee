@@ -83,16 +83,23 @@
         }
 
         function addMarkers(data) {
-            let features = data.features;
-            for(let i=0; i<features.length; i++) {
+            if (!data || !data.features || data.features.length === 0) {
+            console.error("No features found in the data.");
+            return;
+        }        
+                let features = data.features;
+                for(let i=0; i<features.length; i++) {
                 let attributes = features[i].attributes;
                 let geometry = features[i].geometry;
+
+                // Check if 'DeviceName' attribute excists, otherwise set a default value
+                let DeviceName = attributes.DeviceName ? attributes.DeviceName : 'Unknown';
 
                 // adding marker to map
                 let marker = new mapboxgl.Marker().setLngLat([geometry.x, geometry.y]).addTo(map);
 
                 // adding popup
-                let popup = new mapboxgl.Popup({ offset: 25 }).setText(attributes.NAME);
+                let popup = new mapboxgl.Popup({ offset: 25, anchor: 'bottom' }).setText(DeviceName);
                 marker.setPopup(popup);
             }
         }
