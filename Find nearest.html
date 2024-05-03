@@ -55,26 +55,42 @@
             zoom: 14
         });
 
-        // request user geolocation and callback with lon and lat
-            function getLocation(page) {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(loc) { // permission granted
-                        location.href = `${page}?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}`;
-                    },
-                    function() { // permission denied
-                        // location defaults to central Bristol
-                        location.href = `${page}?lat=51.454514&lon=-2.587910`;
-                    }
-                )
+        function getLocation(page) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            // Success callback
+            function(loc) {
+                location.href = `${page}?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}`;
+            },
+            // Error callback
+            function(error) {
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        // Permission denied, inform the user
+                        alert("You have denied the request for geolocation. Redirecting to default location.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("Location information is unavailable. Redirecting to default location.");
+                        break;
+                    case error.TIMEOUT:
+                        alert("The request to get user location timed out. Redirecting to default location.");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        alert("An unknown error occurred while trying to get user location. Redirecting to default location.");
+                        break;
+                }
+                // Redirect to default location in Bristol
+                location.href = `${page}?lat=51.454514&lon=-2.587910`;
             }
-            else { // unsupported feature
-                alert("Geolocation is not supported by this browser.");
-                //location defaults to central Bristol
-                location.href= `${page}?lat=51.454514&lon=-2.587910`;
-            }
-        }
-
+        );
+    } else {
+        // Geolocation not supported
+        alert("Geolocation is not supported by this browser.");
+        // Redirect to default location in Bristol
+        location.href = `${page}?lat=51.454514&lon=-2.587910`;
+    }
+}
+       
         function query() {
             let url = 'https://maps2.bristol.gov.uk/server2/rest/services/ext/ll_transport/MapServer/21/query?where=1%3D1&outFields=DeviceRef,DeviceName,PostCode,Access24Hours,LocationShDesc,Latitude,Longitude,Northing,Easting&outSR=4326&f=json'
             fetch(url,{ method: 'get' , headers: { Accept: "application/JSON" }})
@@ -86,9 +102,10 @@
             if (!data || !data.features || data.features.length === 0) {
             console.error("No features found in the data.");
             return;
-        }        
+        }
+
                 let features = data.features;
-                for(let i=0; i<features.length; i++) {
+                for (let i = 0; i < features.length; i++) {
                 let attributes = features[i].attributes;
                 let geometry = features[i].geometry;
 
